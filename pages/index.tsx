@@ -1,25 +1,50 @@
 import { Box, Flex, Button, Text } from "@chakra-ui/react";
 import type { NextPage } from "next";
-import { useState } from "react";
-import { useContract, useSigner } from "wagmi";
+import { useEffect, useState } from "react";
+import { useContract, useProvider, useSigner } from "wagmi";
 import WLMint from "../utils/WhitelistMint.json";
+import { Biconomy } from "@biconomy/mexa";
+import { ethers } from "ethers";
+
+declare const window: any;
 
 const Home: NextPage = () => {
 	const [loading, setLoading] = useState(false);
 
-	const { data: signer, isError, isLoading } = useSigner();
-	const contract = useContract({
-		addressOrName: "0x8fe4dE01854B1AaE58e75caf7D8A73cC88F75bCd",
-		contractInterface: WLMint.abi,
-		signerOrProvider: signer,
+	// const { data: signer } = useSigner();
+	let provider: ethers.providers.Provider;
+
+	let biconomy: any;
+	let biconomyProvider: any;
+	let contract: any;
+
+	useEffect(() => {
+		if (window.ethereum !== "undefined") {
+			provider = new ethers.providers.Web3Provider(window.ethereum);
+			biconomy = new Biconomy(provider, {
+				apiKey: "a86UV8aKm.b5d04fac-a2f3-442e-9dd8-5bb58f1614c2",
+				debug: false,
+			});
+			biconomyProvider = new ethers.providers.Web3Provider(biconomy);
+		}
 	});
 
 	const mint = async () => {
 		setLoading(true);
+		const signer = biconomyProvider.getSigner();
+		contract = new ethers.Contract(
+			"0xd3Ca0B0eA48A7a9943C7b0A44ECE57CedDC58D1b",
+			WLMint.abi,
+			signer
+		);
 		try {
-			let txn = await contract.mint();
+			let txn = await contract.mint({
+				gasPrice: 25,
+				gasLimit: 9000000,
+			});
 			console.log(txn);
 			setLoading(false);
+			alert(`Txn completed with txn hash: ${txn.hash}`);
 		} catch (e) {
 			console.log(e);
 			setLoading(false);
