@@ -81,7 +81,7 @@ const Home: NextPage = () => {
 				<Button mt={4} isLoading={loading} onClick={mint}>
 					Mint
 				</Button>
-				<Button>
+				<Button m={4}>
 					<a
 						href="https://testnets.opensea.io/collection/daksh-fkpro6x8js"
 						target={"_blank"}
