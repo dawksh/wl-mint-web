@@ -85,6 +85,7 @@ const Home: NextPage = () => {
 					<a
 						href="https://testnets.opensea.io/collection/daksh-fkpro6x8js"
 						target={"_blank"}
+						rel="noreferrer"
 					>
 						Opensea Collection
 					</a>
