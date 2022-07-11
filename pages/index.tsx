@@ -12,23 +12,20 @@ declare const window: any;
 const Home: NextPage = () => {
 	const [loading, setLoading] = useState(false);
 
-	const { data } = useAccount();
-	let provider: ethers.providers.Provider;
-
+	const { data, isSuccess } = useAccount();
+	let provider = useProvider();
+	const { data: sig } = useSigner();
 	let biconomy: any;
 	let biconomyProvider: any;
 	let contract: any;
 
 	useEffect(() => {
-		if (window.ethereum != "undefined") {
-			provider = new ethers.providers.Web3Provider(window.ethereum);
-			biconomy = new Biconomy(provider, {
+		if (sig !== null && sig !== undefined) {
+			biconomy = new Biconomy(sig?.provider, {
 				apiKey: process.env.NEXT_PUBLIC_BICO_API as string,
 				debug: false,
 			});
 			biconomyProvider = new ethers.providers.Web3Provider(biconomy);
-		} else {
-			alert("Ethereum enviornment not found");
 		}
 	});
 
